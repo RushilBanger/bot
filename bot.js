@@ -37,18 +37,22 @@ async function sendImageToTelegram(imageUrl) {
   }
 }
 
-// MAIN FUNCTION (wrapped to allow top-level await)
 async function runBot() {
   const browser = await puppeteer.launch({
-    headless: true, // ✅ TRUE for server environments like Render/Vercel
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: 'new', // Use headless Chrome, required in cloud
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--window-size=1280,720'
+    ],
     userDataDir: USER_DATA_DIR,
+    defaultViewport: null
   });
 
-  const page = await browser.newPage();
+  const [page] = await browser.pages();
   await page.goto('https://rpy.club/chat', { waitUntil: 'domcontentloaded' });
 
-  // Login Check
+  // Check if login is required
   const isLogin = await page.evaluate(() => {
     const inputExists = !!document.querySelector('input[name="username"]');
     const loginButtonExists = Array.from(document.querySelectorAll('button')).some(
@@ -58,14 +62,12 @@ async function runBot() {
   });
 
   if (isLogin) {
-    console.log('🔓 Login required. Please log in manually.');
-    await page.waitForSelector('#unique_message_linBreak', { timeout: 0 });
-    console.log('✅ Login complete.');
+    console.log('🔓 Login required. Please log in manually using headful mode locally.');
   } else {
     console.log('✅ Already logged in.');
   }
 
-  // Message monitoring loop
+  // Infinite message check loop
   while (true) {
     try {
       const result = await page.evaluate(() => {
@@ -74,7 +76,6 @@ async function runBot() {
 
         const text = lastTextEl?.innerText?.trim() || null;
         const textId = lastTextEl?.getAttribute('data-message-id') || text?.slice(0, 50) || null;
-
         const imageSrc = lastImageEl?.src || null;
 
         return { text, textId, imageSrc };
@@ -94,15 +95,12 @@ async function runBot() {
       console.error('⚠️ Message check error:', err.message);
     }
 
-    await new Promise(resolve => setTimeout(resolve, 5000)); // 5 seconds
+    await new Promise(resolve => setTimeout(resolve, 5000)); // wait 5s
   }
 
-  // Never close browser — persistent monitoring
-  // await browser.close();
+  // Never close browser, keep it running
 }
 
-runBot();
-
-
+module.exports = { runBot };
 
 
