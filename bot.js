@@ -39,9 +39,17 @@ async function sendImageToTelegram(imageUrl) {
 
 (async () => {
   const browser = await puppeteer.launch({
-    headless: false,
-    userDataDir: USER_DATA_DIR,
-    defaultViewport: null,
+  headless: 'new',
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--no-zygote',
+    '--single-process',
+  ]
+});
+
   });
 
   const [page] = await browser.pages();
@@ -99,3 +107,4 @@ async function sendImageToTelegram(imageUrl) {
 
   // No browser.close(); — keep running forever
 })();
+
