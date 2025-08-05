@@ -53,8 +53,6 @@ async function sendImageToTelegram(imageUrl) {
   const [page] = await browser.pages();
   await page.goto('https://rpy.club/chat', { waitUntil: 'domcontentloaded' });
 
-  // ... rest of your code ...
-})();
 
 
   });
@@ -114,5 +112,6 @@ async function sendImageToTelegram(imageUrl) {
 
   // No browser.close(); — keep running forever
 })();
+
 
 
