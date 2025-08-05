@@ -39,7 +39,7 @@ async function sendImageToTelegram(imageUrl) {
 
 async function runBot() {
   const browser = await puppeteer.launch({
-    headless: 'new', // Use headless Chrome, required in cloud
+    headless: false, // Use headless Chrome, required in cloud
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -102,5 +102,6 @@ async function runBot() {
 }
 
 module.exports = { runBot };
+
 
 
