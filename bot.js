@@ -39,16 +39,23 @@ async function sendImageToTelegram(imageUrl) {
 
 (async () => {
   const browser = await puppeteer.launch({
-  headless: 'new',
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--no-zygote',
-    '--single-process',
-  ]
-});
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-zygote',
+      '--single-process',
+    ]
+  });
+
+  const [page] = await browser.pages();
+  await page.goto('https://rpy.club/chat', { waitUntil: 'domcontentloaded' });
+
+  // ... rest of your code ...
+})();
+
 
   });
 
@@ -107,4 +114,5 @@ async function sendImageToTelegram(imageUrl) {
 
   // No browser.close(); — keep running forever
 })();
+
 
